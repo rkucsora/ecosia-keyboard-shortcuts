@@ -1,0 +1,18 @@
+{
+	"manifest_version": 2,
+	"name": "Ecosia Keyboard Shortcuts",
+	"version": "1.0",
+  
+	"description": "Basic keyboard shortcuts for the Ecosia search results page.",
+  
+	"icons": {
+	  "48": "icons/eks-icon.png"
+	},
+  
+	"content_scripts": [
+	  {
+		"matches": ["*://*.ecosia.org/search*"],
+		"js": ["ecosia_keyboard_shortcuts.js"]
+	  }
+	]
+}
