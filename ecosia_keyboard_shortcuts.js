@@ -32,16 +32,18 @@ const moveSelection = function(moveBy) {
 }
 
 document.addEventListener("keydown", e => {
-	if (e.key == moveDownKey) {
-		moveSelection(1);
-	} else if (e.key == moveUpKey) {
-		moveSelection(-1);
-	} else if (isChrome) {
-		if (e.key == "Enter") {
-			if (!e.ctrlKey) {
-				results[selected].querySelector("a").click();
-			} else {
-				results[selected].querySelector("a").dispatchEvent(new MouseEvent("click", {ctrlKey: true}));
+	if (e.target.tagName.toLowerCase() !== "input") {
+		if (e.key == moveDownKey) {
+			moveSelection(1);
+		} else if (e.key == moveUpKey) {
+			moveSelection(-1);
+		} else if (isChrome) {
+			if (e.key == "Enter") {
+				if (!e.ctrlKey) {
+					results[selected].querySelector("a").click();
+				} else {
+					results[selected].querySelector("a").dispatchEvent(new MouseEvent("click", {ctrlKey: true}));
+				}
 			}
 		}
 	}
