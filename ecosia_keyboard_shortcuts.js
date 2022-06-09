@@ -3,7 +3,7 @@ const moveUpKey = "k";
 const extraScroll = 30;
 const borderColor = "blue";
 
-const results = document.querySelectorAll(".layout-card, .card-web .result");
+const results = document.querySelectorAll(".web-result, .layout-card, .card-web .result");
 let selected = -1;
 
 const isChrome = typeof(browser) === "undefined";
