@@ -1,9 +1,12 @@
 const moveDownKey = "j";
 const moveUpKey = "k";
+const searchKey = "?";
+const exitSearchKey = "Escape";
 const extraScroll = 30;
 const borderColor = "blue";
 
 const results = document.querySelectorAll(".web-result, .layout-card, .card-web .result");
+const search = document.querySelector(".search-form__input");
 let selected = -1;
 
 const isChrome = typeof(browser) === "undefined";
@@ -37,6 +40,14 @@ document.addEventListener("keydown", e => {
 			moveSelection(1);
 		} else if (e.key == moveUpKey) {
 			moveSelection(-1);
+		} else if (e.key == searchKey) {
+			e.preventDefault();
+			let startSelection = search.value.length;
+			if (e.ctrlKey) {
+				startSelection = 0;
+			}
+			search.focus();
+			search.setSelectionRange(startSelection, search.value.length);
 		} else if (isChrome) {
 			if (e.key == "Enter") {
 				if (!e.ctrlKey) {
@@ -45,6 +56,10 @@ document.addEventListener("keydown", e => {
 					results[selected].querySelector("a").dispatchEvent(new MouseEvent("click", {ctrlKey: true}));
 				}
 			}
+		}
+	} else {
+		if (e.key == exitSearchKey) {
+			document.activeElement.blur();
 		}
 	}
 });
