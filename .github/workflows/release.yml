@@ -30,7 +30,7 @@ jobs:
       - name: publish Firefox extension
         uses: wdzeng/firefox-addon@v1
         with:
-          addon-guid:  e9af275d-0b38-456e-be73-d802d8633a66
+          addon-guid: ecosia-keyboard-shortcuts
           xpi-path: ${{ steps.web-ext-build.outputs.target }}
           self-hosted: false
           jwt-issuer: ${{ secrets.FIREFOX_ISSUER }}
