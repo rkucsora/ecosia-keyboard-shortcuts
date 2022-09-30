@@ -1,0 +1,48 @@
+name: Publish new release
+on:
+  push:
+    tags:
+      - v**
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v2"
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          # Optionally strip `v` prefix
+          strip_v: true
+
+      - name: Update version in manifest
+        run: sed -i "s/{{VERSION}}/${{steps.tag.outputs.tag}}/g" manifest.json
+
+      - name: "web-ext build"
+        id: web-ext-build
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: build
+          source: .
+
+      - name: publish Firefox extension
+        uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid:  e9af275d-0b38-456e-be73-d802d8633a66
+          xpi-path: ${{ steps.web-ext-build.outputs.target }}
+          self-hosted: false
+          jwt-issuer: ${{ secrets.FIREFOX_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_SECRET }}
+
+      - name: publish Chrome extension
+        uses: mobilefirstllc/cws-publish@latest
+        with:
+          action: 'upload'
+          client_id: ${{ secrets.CHROME_CLIENT }}
+          client_secret: ${{ secrets.CHROME_SECRET }}
+          refresh_token: ${{ secrets.CHROME_TOKEN }}
+          extension_id: 'dpobhneijjdebjccapdmeflhegkjfeij'
+          zip_file: ${{ steps.web-ext-build.outputs.target }}
+
