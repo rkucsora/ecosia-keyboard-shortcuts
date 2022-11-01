@@ -5,7 +5,7 @@ on:
       - v**
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: "actions/checkout@v2"
@@ -14,35 +14,66 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
         with:
-          # Optionally strip `v` prefix
           strip_v: true
 
-      - name: Update version in manifest
-        run: sed -i "s/{{VERSION}}/${{steps.tag.outputs.tag}}/g" manifest.json
+      - name: manifest Version
+        uses: deef0000dragon1/json-edit-action/@v1
+        env:
+          KEY: version
+          VALUE: ${{steps.tag.outputs.tag}}
+          FILE: manifest.json
 
-      - name: "web-ext build"
+      - name: web-ext build
         id: web-ext-build
         uses: kewisch/action-web-ext@v1
         with:
           cmd: build
           source: .
 
+      - name: save output filename to env var
+        run: echo "ARTIFACT_FILENAME=$(basename ${{steps.web-ext-build.outputs.target}})" >> $GITHUB_ENV
+
+      - name: save the artifact for the release jobs
+        uses: actions/upload-artifact@v3
+        with:
+          name: extension-artifact
+          path: ${{ steps.web-ext-build.outputs.target }}
+
+  release-firefox:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+
+      - name: get the artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: extension-artifact
+
       - name: publish Firefox extension
         uses: wdzeng/firefox-addon@v1
         with:
           addon-guid: ecosia-keyboard-shortcuts
-          xpi-path: ${{ steps.web-ext-build.outputs.target }}
+          xpi-path: ${{ env.ARTIFACT_FILENAME }}
           self-hosted: false
           jwt-issuer: ${{ secrets.FIREFOX_ISSUER }}
           jwt-secret: ${{ secrets.FIREFOX_SECRET }}
 
+  release-chrome:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+
+      - name: get the artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: extension-artifact
+
       - name: publish Chrome extension
         uses: mobilefirstllc/cws-publish@latest
         with:
-          action: 'upload'
+          action: 'publish'
           client_id: ${{ secrets.CHROME_CLIENT }}
           client_secret: ${{ secrets.CHROME_SECRET }}
           refresh_token: ${{ secrets.CHROME_TOKEN }}
           extension_id: 'dpobhneijjdebjccapdmeflhegkjfeij'
-          zip_file: ${{ steps.web-ext-build.outputs.target }}
-
+          zip_file: ${{ env.ARTIFACT_FILENAME }}

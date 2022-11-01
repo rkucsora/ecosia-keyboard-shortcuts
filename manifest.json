@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Ecosia Keyboard Shortcuts",
-	"version": "{{VERSION}}",
+	"version": "1.x",
   
 	"description": "Basic keyboard shortcuts for the Ecosia search results page.",
   
@@ -17,7 +17,7 @@
 	],
 	"browser_specific_settings": {
 	  "gecko": {
-	    "id": "ecosia-keyboard-shortcuts"
+	    "id": "{e9af275d-0b38-456e-be73-d802d8633a66}"
 	  }
 	}
 
