@@ -11,8 +11,7 @@ let selected = -1;
 
 const isChrome = typeof(browser) === "undefined";
 
-const moveSelection = function(moveBy) {
-	const updated = selected + moveBy;
+const moveSelectionTo = function(updated) {
 	if (updated >= 0 && updated < results.length) {
 		if (selected != -1) {
 			results[selected].style.border = "none";
@@ -37,9 +36,15 @@ const moveSelection = function(moveBy) {
 document.addEventListener("keydown", e => {
 	if (e.target.tagName.toLowerCase() !== "input") {
 		if (e.key == moveDownKey) {
-			moveSelection(1);
+			moveSelectionTo(selected + 1);
 		} else if (e.key == moveUpKey) {
-			moveSelection(-1);
+			moveSelectionTo(selected - 1);
+		} else if (!isNaN(e.key)) {
+			if (e.key == 0) {
+				moveSelectionTo(9);
+			} else {
+				moveSelectionTo(e.key - 1)
+			}
 		} else if (e.key == searchKey) {
 			e.preventDefault();
 			let startSelection = search.value.length;
