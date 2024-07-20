@@ -3,7 +3,7 @@ const moveUpKey = "k";
 const searchKey = "?";
 const exitSearchKey = "Escape";
 const extraScroll = 30;
-const borderColor = "blue";
+const borderColor = "var(--color-focused)";
 
 const results = document.querySelectorAll(".web-result, .layout-card, .card-web .result");
 const search = document.querySelector(".search-form__input");
